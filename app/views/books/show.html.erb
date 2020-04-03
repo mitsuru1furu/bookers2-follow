@@ -22,11 +22,87 @@
 					</td>
 					<td><%= link_to @book2.title,book_path(@book2.id)%></td>
 					<td><%= @book2.body %></td>
+
 					<% if @user.id == current_user.id %>
 					<td><%= link_to "Edit", "/books/#{@book2.id}/edit", class: "btn-sm btn-success edit_book_#{@book.id}" %></td>
 					<td><%= link_to "Destroy",book_path, method: :delete, data: {confirm: "本当に削除してもよろしいですか？"}, class: "btn-sm btn-danger" %></td>
 					<% end %>
+
+						<td style="text-align:center;">
+					     <% if @book2.favorited_by?(current_user)%>
+							<%= link_to book_favorites_path(@book2), method: :delete do %>
+							<div class= "glyphicon glyphicon-heart" area-hidden = "true" style ="color :red;" ></div>
+							<%= @book2.favorites.count %> いいね
+							<% end %>
+						
+						
+							<% else %>
+							<%= link_to book_favorites_path(@book2), method: :post do %>
+							<div class="glyphicon glyphicon-heart" aria-hidden = "true"></div>
+							<%= @book2.favorites.count %> いいね
+							<% end %>
+						<% end %>
+					</td>
+					<td>
+						<div class="glyphicon glyphicon-comment"></div>
+						<a href="#comments"><%= @book2.book_comments.count %></a>
+					</td>
 				</tr>
+				<tr>
+					<td>
+					<div class="comment-list bt style-2" id ="comments">
+						<div class="float-wrapper">
+							<h2 class="comment-count"><%= @book2.book_comments.count %>件コメント</h2>
+						</div>
+					</div>
+				</td>
+				<td colspan="4"></td>
+				</tr>
+
+				<%@book2.book_comments.each do |book_comment|%>
+					<tr class="comment">
+						<td>
+						<div class ="comment-body bb">
+							<div class="commnet-avatar">
+								<div class="avatar">
+									<%= attachment_image_tag(book_comment.user, :profile_image, :fill, 50, 50, fallback: "no-image-mini.jpg") %>
+								</div>
+							</div>
+							<div class="comment-text">
+								<div class="comment-author clearfix">
+									<a href="#" class="link-author"><%=book_comment.user.name %></a>
+									<span class="comment-meta">
+										<span class="comment-date"><%= book_comment.created_at.strftime('%Y/%m/%d')%></span>
+									</span>
+								</div>
+								<div class="comment-entry"><%= book_comment.comment%></div>
+							</div>
+							</div>
+						</td>
+						<td colspan="4"></td>
+						<td><%= link_to book_book_comments_path(@book2), method: :delete do %>
+							<div class= "glyphicon glyphicon-trash" area-hidden = "true"></div>
+							<% end %>
+						</td>
+						
+					</tr>
+					<% end %>
+					<tr>
+						<td>
+							<%= form_for [@book2, @book_comment] do |f| %>
+    						<div class="row">
+       							<div class="col-sm-12">
+            						<%= f.text_area :comment, rows:'5', class: "form-control",placeholder: "コメントをここに" %>
+       							</div>
+   							</div>
+    							<%= f.submit "送信する", class: "btn btn-lg btn-base-1 mt-20 pull-right" %>
+							<% end %>
+						</td>
+						<td colspan="4"></td>
+					</tr>
+
+
+
 			</table>
 
 	</div>
