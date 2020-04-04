@@ -1,0 +1,55 @@
+
+        <div class="user_avatars">
+          <table class="table">
+  <thead>
+    <tr>
+      <th>image</th>
+      <th>name</th>
+      <th colspan="3"></th>
+    </tr>
+  </thead>
+  <tbody>
+        <% @users.each do |user| %>
+    <tr>
+      <td><%= attachment_image_tag(user, :profile_image, :fill, 50, 50, fallback: "no-image-mini.jpg") %></td>
+      <td><%= user.name%></td>
+      <% user ||= current_user %>
+    <div class="stats">
+      <th>フォロー数
+      <a href="<%= following_user_path(user) %>">
+            <strong id="following" class="stat">
+                <%= user.following.count %>
+            </strong>
+          </a>
+        </th>
+          <th>フォロワー数
+      <a href="<%= followers_user_path(user) %>">
+            <strong id="followers" class="stat">
+                <%= user.followers.count %>
+            </strong>
+          </a></th>
+      </div>
+      <th>
+        <% unless  user.id == current_user.id  %>
+        <div id="follow_form">
+            <% if current_user.following?(user) %>
+                <%= form_for(current_user.active_relationships.find_by(followed_id: user.id),html: { method: :delete }) do |f| %>
+                <%= f.submit "Unfollow", class: "btn btn-primary" %>
+            <% end %>
+              <% else %>
+                 <%= form_for(current_user.active_relationships.build) do |f| %>
+                  <div><%= hidden_field_tag :followed_id, user.id %></div>
+                  <%= f.submit "Follow", class: "btn btn-primary" %>
+              <% end %>
+              <% end %>
+            
+          </div>
+        <% end %>
+        </th>
+      <td><%= link_to "Show", user, class: "user_#{user.id}" %></td>
+    </tr>
+    <% end %>
+  </tbody>
+</table>
+  </div>
+</div>

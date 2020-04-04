@@ -1,11 +1,23 @@
 class UsersController < ApplicationController
-  before_action :login_check, only: [:index, :new, :show, :edit, :update, :destroy]
+  before_action :login_check, only: [:index, :new, :show, :edit, :update, :destroy,:following, :followers]
 	before_action :baria_user, only: [:update, :edit, :destroy]
 
-  
+  def following
+    @title = "Following"
+    @user  = User.find(params[:id])
+    @users = @user.following.paginate(page: params[:page])
+    render 'show_follow'
+  end
+
+  def followers
+    @title = "Followers"
+    @user  = User.find(params[:id])
+    @users = @user.followers.paginate(page: params[:page])
+    render 'show_follow'
+  end
 
   def index
-  	@users = User.all #一覧表示するためにUserモデルのデータを全て変数に入れて取り出す。
+  	@users = User.all#一覧表示するためにUserモデルのデータを全て変数に入れて取り出す。
   	@book = Book.new #new bookの新規投稿で必要（保存処理はbookコントローラー側で実施）
   end
   def show

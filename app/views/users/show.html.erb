@@ -2,7 +2,27 @@
 	<div class="col-xs-3">
 <h2>User info</h2>
 <%= render 'users/profile', user: @user %>
+
+
+<% unless  @user.id == current_user.id  %>
+  <div id="follow_form">
+  <% if current_user.following?(@user) %>
+    <%= form_for(current_user.active_relationships.find_by(followed_id: @user.id),
+             html: { method: :delete }) do |f| %>
+  <%= f.submit "フォロー外す", class: "btn btn-primary" %>
+<% end %>
+  <% else %>
+    <%= form_for(current_user.active_relationships.build) do |f| %>
+  <div><%= hidden_field_tag :followed_id, @user.id %></div>
+  <%= f.submit "フォローする", class: "btn btn-primary" %>
+<% end %>
+  <% end %>
+  </div>
+<% end %>
+
 <!--同コントローラーのviewで表示ならusersは省略可 -->
+
+
 
 <h2>New book</h2>
 <%= render 'books/newform', book: @book %>
